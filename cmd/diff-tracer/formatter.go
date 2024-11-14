@@ -18,8 +18,9 @@ func getNextChar(idx int, size int, data string) string {
 	return fmt.Sprintf("%c", data[idx+1])
 }
 
-func formatter(data string) string {
-	result := ""
+func formatter(data string) []string {
+	currLine := ""
+	result := []string{}
 	currIndentation := 0
 
 	for idx, c := range data {
@@ -28,13 +29,15 @@ func formatter(data string) string {
 		if char == "{" {
 			nextChar := getNextChar(idx, len(data), data)
 			if nextChar == "}" {
-				result += char
+				currLine += char
 				continue
 			}
-			result += char + "\n"
+			currLine += char
+			result = append(result, currLine)
+			currLine = ""
 			currIndentation += 2
 			for range currIndentation {
-				result += " "
+				currLine += " "
 			}
 			continue
 		}
@@ -42,28 +45,31 @@ func formatter(data string) string {
 		if char == "}" {
 			prevChar := getPrevChar(idx, data)
 			if prevChar == "{" {
-				result += char
+				currLine += char
 				continue
 			}
 			currIndentation -= 2
-			result += "\n"
+			result = append(result, currLine)
+			currLine = ""
 			for range currIndentation {
-				result += " "
+				currLine += " "
 			}
-			result += char
+			currLine += char
 			continue
 		}
 
 		if char == "[" {
 			nextChar := getNextChar(idx, len(data), data)
 			if nextChar == "]" {
-				result += char
+				currLine += char
 				continue
 			}
-			result += char + "\n"
+			currLine += char
+			result = append(result, currLine)
+			currLine = ""
 			currIndentation += 2
 			for range currIndentation {
-				result += " "
+				currLine += " "
 			}
 			continue
 		}
@@ -71,27 +77,32 @@ func formatter(data string) string {
 		if char == "]" {
 			prevChar := getPrevChar(idx, data)
 			if prevChar == "[" {
-				result += char
+				currLine += char
 				continue
 			}
 			nextChar := getNextChar(idx, len(data), data)
 			currIndentation -= 2
 			if nextChar == "," {
-				result += "\n"
+				result = append(result, currLine)
+				currLine = ""
 				for range currIndentation {
-					result += " "
+					currLine += " "
 				}
-				result += char
+				currLine += char
 			} else {
-				result += char + "\n"
+				currLine += char
+				result = append(result, currLine)
+				currLine = ""
 			}
 			continue
 		}
 
 		if char == "," {
-			result += char + "\n"
+			currLine += char
+			result = append(result, currLine)
+			currLine = ""
 			for range currIndentation {
-				result += " "
+				currLine += " "
 			}
 			continue
 		}
@@ -99,12 +110,12 @@ func formatter(data string) string {
 		if char == ":" {
 			prevChar := getPrevChar(idx, data)
 			if prevChar == "\"" {
-				result += char + " "
+				currLine += char + " "
 				continue
 			}
 		}
 
-		result += char
+		currLine += char
 	}
 
 	return result

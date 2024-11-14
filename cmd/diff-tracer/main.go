@@ -83,6 +83,26 @@ var (
 	docStyle = lipgloss.NewStyle().Padding(1, 2, 1, 2)
 )
 
+var (
+	// Status Bar.
+
+	statusNugget = lipgloss.NewStyle().
+			Padding(0, 1)
+
+	statusBarStyle = lipgloss.NewStyle()
+
+	equalLine = lipgloss.NewStyle().UnsetBackground()
+
+	statusStyle = lipgloss.NewStyle().
+			Background(lipgloss.Color("#b23655")).
+			Padding(0, 1).
+			MarginRight(1)
+
+	encodingStyle = statusNugget.
+			Background(lipgloss.Color("#347d39")).
+			Align(lipgloss.Right)
+)
+
 func main() {
 	physicalWidth, _, _ := term.GetSize(int(os.Stdout.Fd()))
 	doc := strings.Builder{}
@@ -105,37 +125,28 @@ func main() {
 	// code blocks
 	{
 		data := `{"data":[],"meta":{"numberOfUnreadNotifications":0,"total":0,"anotherArr":[1,2],"exists":false},hash:{}}`
+		// displayedCode1 := formatter(data)
+		// displayedCode2 := formatter(data)
 		displayedCode1 := formatter(data)
-		displayedCode2 := formatter(data)
+		displayedCode2 := data
+
+		aaa := []string{}
+		for _, line := range displayedCode1 {
+			aaa = append(aaa, statusStyle.Render(line))
+		}
+		code1 := lipgloss.JoinVertical(
+			lipgloss.Top,
+			aaa...,
+		)
 
 		doc.WriteString(lipgloss.JoinHorizontal(
 			lipgloss.Top,
-			codeBlockStyle.Align(lipgloss.Left).Render(displayedCode1),
+			codeBlockStyle.Align(lipgloss.Left).Render(code1),
 			codeBlockStyle.Align(lipgloss.Left).Render(displayedCode2),
 		))
 
 		doc.WriteString("\n\n")
 	}
-
-	var (
-		// Status Bar.
-
-		statusNugget = lipgloss.NewStyle().
-				Padding(0, 1)
-
-		statusBarStyle = lipgloss.NewStyle()
-
-		equalLine = lipgloss.NewStyle().UnsetBackground()
-
-		statusStyle = lipgloss.NewStyle().
-				Background(lipgloss.Color("#b23655")).
-				Padding(0, 1).
-				MarginRight(1)
-
-		encodingStyle = statusNugget.
-				Background(lipgloss.Color("#347d39")).
-				Align(lipgloss.Right)
-	)
 
 	{
 
