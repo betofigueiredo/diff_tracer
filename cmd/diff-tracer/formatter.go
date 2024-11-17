@@ -118,5 +118,7 @@ func formatter(data string) []string {
 		currLine += char
 	}
 
+	result = append(result, currLine)
+
 	return result
 }
