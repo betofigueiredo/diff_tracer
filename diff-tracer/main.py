@@ -2,13 +2,11 @@ import asyncio
 import random
 from typing import Any, Callable, Coroutine, TypedDict, TypeVar
 
+from diff_match_patch import diff_match_patch
 from pydantic import BaseModel
+from utils import utils
 
 T = TypeVar("T", bound=BaseModel)
-
-
-def check_results(current_result: str, new_result: str) -> bool:
-    return current_result == new_result
 
 
 # def compare_sync(
@@ -20,41 +18,48 @@ def check_results(current_result: str, new_result: str) -> bool:
 # ):
 #     pass
 
+MAIN_FILE_NAME = "diff-tracer-main-info.txt"
+
 
 async def compare_async[T](
     current_fn: Callable[[], Coroutine[Any, Any, T]],
     new_fn: Callable[[], Coroutine[Any, Any, T]],
     percentage: int,
-    logger_callback: Callable[[str], Coroutine[Any, Any, None]],
 ) -> T:
-    # one file for each endpoint
-
     # make current production request
     current_result = await current_fn()
 
-    # check if should make second request to compare
-    total_request: int = 40
-    compared_requests: int = 3
-    percentage_of_total: int = round((compared_requests / total_request) * 100)
-    should_compare = percentage_of_total < percentage and random.random() < 0.5
+    try:
+        # get previous data
+        total_requests = utils.get_main_file_value(key="total_requests", line=1)
+        compared_requests = utils.get_main_file_value(key="compared_requests", line=2)
+        different_results = utils.get_main_file_value(key="different_results", line=3)
 
-    # handle new result if needed
-    new_result = ""
-    if should_compare:
-        new_result = await new_fn()
+        # count current request
+        total_requests += 1
 
-        has_equal_result = check_results(
-            current_result=str(current_result), new_result=str(new_result)
-        )
+        # check if should make second request to compare
+        percentage_of_total: int = round((compared_requests / total_requests) * 100)
+        should_compare = percentage_of_total < percentage and random.random() < 0.5
 
-        log = {
-            "is_equal": has_equal_result,
-            "diff_trace": "",
-        }
+        # handle new result if needed
+        if should_compare:
+            compared_requests += 1
+            new_result = await new_fn()
+            is_equal, diff_content = diff_match_patch().diff_main(
+                text1=str(current_result), text2=str(new_result)
+            )
+            if not is_equal:
+                different_results += 1
+                html_content = diff_match_patch().diff_prettyHtml(diffs=diff_content)
+                utils.create_diff_result_file(html_content)
 
-        await logger_callback(str(log))
+        utils.update_main_file(total_requests, compared_requests, different_results)
 
-    return current_result
+        return current_result
+
+    except Exception:
+        return current_result
 
 
 # ANCHOR:
@@ -73,19 +78,14 @@ async def useCase2(param1: int, param2: str) -> Response:
     return {"param1": param1, "param2": param2}
 
 
-async def logger(log: str) -> None:
-    print(log)
-
-
 async def controller() -> Response:
     current_fn = lambda: useCase1(param1=10, param2="nf24f8fn")
-    new_fn = lambda: useCase2(param1=10, param2="nf24f8fnn")
+    new_fn = lambda: useCase2(param1=11, param2="nf24f8fn")
 
     result = await compare_async(
         current_fn=current_fn,
         new_fn=new_fn,
-        percentage=10,
-        logger_callback=logger,
+        percentage=80,
     )
 
     return result
