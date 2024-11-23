@@ -33,9 +33,9 @@ async def currentUseCase() -> UsersResponse:
 # example of a refactored use case with a different response
 async def newUseCase() -> UsersResponse:
     users = [
-        User(public_id="1", name="John", age=32),
+        User(public_id="1", name="John", age=30),
         User(public_id="2", name="Ane", age=20),
-        User(public_id="3", name="Brookss", age=38),
+        User(public_id="3", name="Brooks", age=38),
     ]
     return {"users": users}
 

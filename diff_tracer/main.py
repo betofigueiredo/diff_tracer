@@ -112,7 +112,7 @@ def init_web_view(app: FastAPI, security_token: str) -> None:
                 file_content = utils.get_result_file_content(filename)
 
             # return HTML
-            templates = Jinja2Templates("diff-tracer")
+            templates = Jinja2Templates("diff_tracer")
             return templates.TemplateResponse(
                 "view.html",
                 {

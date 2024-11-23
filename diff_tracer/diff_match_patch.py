@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# mypy: ignore-errors
 
 """Diff Match and Patch
 Copyright 2018 The diff-match-patch Authors.

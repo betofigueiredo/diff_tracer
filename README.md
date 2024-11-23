@@ -1,4 +1,4 @@
-# diff-tracer
+# diff_tracer
 
 Compare two responses to see if there is any difference or if both are having identical properties and values.
 

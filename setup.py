@@ -9,14 +9,14 @@ with open(path.join(working_directory, "README.md"), encoding="utf-8") as f:
 
 
 setup(
-    name="diff-tracer",
+    name="diff_tracer",
     version="0.0.1",
     description="Compare two responses to see if there is any difference or if both are having identical properties and values.",
-    package_dir={"": "diff-tracer"},
-    packages=find_packages(where="diff-tracer"),
+    package_dir={"": "diff_tracer"},
+    packages=find_packages(where="diff_tracer"),
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/betofigueiredo/diff-tracer",
+    url="https://github.com/betofigueiredo/diff_tracer",
     author="Herberto Figueiredo",
     author_email="herbertof@gmail.com",
     license="MIT",

@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "diff-tracer"
+name = "diff_tracer"
 version = "0.0.1"
 description = ""
 authors = ["Beto Figueiredo"]
@@ -47,9 +47,9 @@ plugins = ["pydantic.mypy"]
 extend-ignore = ["E731"]
 
 [tool.taskipy.tasks]
-start_api = { cmd = "fastapi dev diff-tracer/fastapi.py", help = "start FastAPI API" }
+start_api = { cmd = "fastapi dev diff_tracer/fastapi.py", help = "start FastAPI API" }
 test = { cmd = "python3 -m pytest -vv", help = "runs all unit tests" }
-mypy = { cmd = "mypy", help = "runs mypy" }
+mypy = { cmd = "mypy diff_tracer", help = "runs mypy" }
 
 [build-system]
 requires = ["poetry-core", "setuptools", "wheel"]
