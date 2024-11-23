@@ -109,8 +109,8 @@ class diff_match_patch:
         # Check for equality (speedup).
         if text1 == text2:
             if text1:
-                return True, [(self.DIFF_EQUAL, text1)]
-            return True, []
+                return [(self.DIFF_EQUAL, text1)]
+            return []
 
         # Trim off common prefix (speedup).
         commonlength = self.diff_commonPrefix(text1, text2)
@@ -136,7 +136,7 @@ class diff_match_patch:
         if commonsuffix:
             diffs.append((self.DIFF_EQUAL, commonsuffix))
         self.diff_cleanupMerge(diffs)
-        return False, diffs
+        return diffs
 
     def diff_compute(self, text1, text2, checklines, deadline):
         """Find the differences between two texts.  Assumes that the texts do not
