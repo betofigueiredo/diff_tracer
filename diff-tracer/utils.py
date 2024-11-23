@@ -46,5 +46,11 @@ class Utils:
         with open(file_location, "w") as buffer:
             buffer.write(html_content)
 
+    def get_result_file_content(self, filename: str) -> str:
+        target_path = self.get_target_path()
+        file_location = os.path.join(target_path, filename)
+        with open(file_location, "r") as buffer:
+            return buffer.read()
+
 
 utils = Utils()
