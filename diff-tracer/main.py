@@ -1,10 +1,14 @@
-import asyncio
+import os
 import random
-from typing import Any, Callable, Coroutine, TypedDict, TypeVar
+from typing import Any, Callable, Coroutine, TypeVar
 
-from diff_match_patch import diff_match_patch
+from fastapi import FastAPI, HTTPException, Request, status
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-from utils import utils
+
+from .diff_match_patch import diff_match_patch
+from .utils import utils
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -17,8 +21,6 @@ T = TypeVar("T", bound=BaseModel)
 #     # html_file_name="example_profile.html"
 # ):
 #     pass
-
-MAIN_FILE_NAME = "diff-tracer-main-info.txt"
 
 
 async def compare_async[T](
@@ -51,9 +53,12 @@ async def compare_async[T](
             )
             if not is_equal:
                 different_results += 1
+
+                # save file with differences
                 html_content = diff_match_patch().diff_prettyHtml(diffs=diff_content)
                 utils.create_diff_result_file(html_content)
 
+        # update main file on memory
         utils.update_main_file(total_requests, compared_requests, different_results)
 
         return current_result
@@ -62,35 +67,57 @@ async def compare_async[T](
         return current_result
 
 
-# ANCHOR:
+def init_web_view(app: FastAPI, security_token: str) -> None:
+    def create_endpoint():
+        async def endpoint(request: Request, token: str, filename: str):
+            if token != security_token:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND, detail={"error": "Not found"}
+                )
 
+            # get requests numbers
+            total_requests = utils.get_main_file_value(key="total_requests", line=1)
+            compared_requests = utils.get_main_file_value(
+                key="compared_requests", line=2
+            )
+            different_results = utils.get_main_file_value(
+                key="different_results", line=3
+            )
 
-class Response(TypedDict):
-    param1: int
-    param2: str
+            # get result files
+            current_path = os.getcwd()
+            target_folder = os.path.join(current_path, "tmp")
+            result_files = []
+            for file_name in os.listdir(target_folder):
+                if file_name.startswith("result-") and file_name.endswith(".html"):
+                    result_files.append(file_name)
 
+            # get selected file content
+            file_content: str = ""
+            if filename:
+                file_content = utils.get_result_file_content(filename)
 
-async def useCase1(param1: int, param2: str) -> Response:
-    return {"param1": param1, "param2": param2}
+            # return HTML
+            templates = Jinja2Templates("diff-tracer")
+            return templates.TemplateResponse(
+                "view.html",
+                {
+                    "request": request,
+                    "token": token,
+                    "total_requests": total_requests,
+                    "compared_requests": compared_requests,
+                    "different_results": different_results,
+                    "result_files": result_files,
+                    "filename": filename,
+                    "file_content": file_content,
+                },
+            )
 
+        return endpoint
 
-async def useCase2(param1: int, param2: str) -> Response:
-    return {"param1": param1, "param2": param2}
-
-
-async def controller() -> Response:
-    current_fn = lambda: useCase1(param1=10, param2="nf24f8fn")
-    new_fn = lambda: useCase2(param1=11, param2="nf24f8fn")
-
-    result = await compare_async(
-        current_fn=current_fn,
-        new_fn=new_fn,
-        percentage=80,
+    app.add_api_route(
+        "/diff-tracer-view/{token}",
+        create_endpoint(),
+        methods=["GET"],
+        response_class=HTMLResponse,
     )
-
-    return result
-
-
-if __name__ == "__main__":
-    result = asyncio.run(controller())
-    # print(result)
