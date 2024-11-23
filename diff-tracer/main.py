@@ -1,3 +1,4 @@
+import json
 import os
 import random
 from typing import Any, Callable, Coroutine, TypeVar
@@ -48,9 +49,21 @@ async def compare_async[T](
         if should_compare:
             compared_requests += 1
             new_result = await new_fn()
-            is_equal, diff_content = diff_match_patch().diff_main(
-                text1=str(current_result), text2=str(new_result)
+
+            # pretty print jsons
+            formatted_current_result = json.dumps(
+                json.loads(json.dumps(current_result)), indent=4
             )
+            formatted_new_result = json.dumps(
+                json.loads(json.dumps(new_result)), indent=4
+            )
+
+            # check differences
+            diff_content = diff_match_patch().diff_main(
+                text1=str(formatted_current_result), text2=str(formatted_new_result)
+            )
+            is_equal = len(diff_content) == 1
+
             if not is_equal:
                 different_results += 1
 
@@ -63,7 +76,8 @@ async def compare_async[T](
 
         return current_result
 
-    except Exception:
+    except Exception as err:
+        print(err)
         return current_result
 
 

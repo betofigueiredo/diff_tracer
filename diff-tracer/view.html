@@ -72,14 +72,13 @@
             text-decoration: underline;
         }
         .diff-view {
-            max-width: 1400px;
             margin: 0 auto;
             /* background-color: #20242f; */
             /* border: 1px solid #d0d7de; */
             border-radius: 6px;
             font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-            font-size: 12px;
-            line-height: 20px;
+            font-size: 16px;
+            line-height: 24px;
             white-space: pre-wrap;
         }
         .diff-content {
@@ -146,7 +145,7 @@
                 <h3 class="section-title">Select any file on the list</h3>
             {% endif %}
             <div class="diff-view">
-                <div class="diff-content">{{file_content|safe}}</div>
+                <div class="diff-content">{{file_content | replace('\r', '<br>') | safe}}</div>
             </div>
         </main>
     </div>
