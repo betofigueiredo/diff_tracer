@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub-like Dashboard</title>
+    <title>Diff Tracer Preview</title>
     <style>
         * {
           box-sizing: border-box;
@@ -82,12 +82,6 @@
             line-height: 20px;
             white-space: pre-wrap;
         }
-        .diff-header {
-            /* background-color: #f3f4f6; */
-            border-bottom: 1px solid #d0d7de;
-            padding: 8px 16px;
-            font-weight: 600;
-        }
         .diff-content {
             padding: 16px;
         }
@@ -98,20 +92,24 @@
             width: 40px;
             user-select: none;
         }
-        .diff-line-content {
-            flex-grow: 1;
-        }
-        .diff-addition {
-            background-color: #e6ffec;
-        }
-        .diff-deletion {
-            background-color: #ffebe9;
-        }
         del {
           color: red;
         }
         ins {
           color: green;
+        }
+        .file-item {
+            border-radius: 4px;
+        }
+        .file-item.selected {
+            padding-left: 12px;
+            background-color: #CFD966;
+        }
+        .file-item a {
+            color: #FFFFFF;
+        }
+        .file-item.selected a {
+            color: #171B26;
         }
     </style>
 </head>
@@ -130,7 +128,11 @@
             <h3 class="section-title">Different responses</h3>
             <ul class="file-list">
                 {%- for result_file in result_files %}
-                    <li><a href="/diff-tracer-view/{{token}}?filename={{result_file}}">{{result_file}}</a></li>
+                    {% if filename == result_file %}
+                        <li class="file-item selected"><a href="/diff-tracer-view/{{token}}?filename={{result_file}}">{{result_file}}</a></li>
+                    {% else %}
+                        <li class="file-item"><a href="/diff-tracer-view/{{token}}?filename={{result_file}}">- {{result_file}}</a></li>
+                    {% endif %}
                 {% endfor %}
                 {% if not result_files %}
                     <li>No file.</li>
@@ -138,9 +140,12 @@
             </ul>
         </aside>
         <main class="main-content">
-            <h3 class="section-title">File</h3>
+            {% if filename %}
+                <h3 class="section-title">{{filename}}</h3>
+            {% else %}
+                <h3 class="section-title">Select any file on the list</h3>
+            {% endif %}
             <div class="diff-view">
-                <div class="diff-header">README.md</div>
                 <div class="diff-content">{{file_content|safe}}</div>
             </div>
         </main>
