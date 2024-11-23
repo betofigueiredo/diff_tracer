@@ -17,12 +17,14 @@ class Utils:
 
     def get_main_file_value(self, key: str, line: int) -> int:
         main_info_file_path = self.get_main_file_path()
-        return int(
+        value = int(
             (linecache.getline(main_info_file_path, line) or f"{key}=0")
             .replace("\n", "")
             .replace("\r", "")
             .replace(f"{key}=", "")
         )
+        linecache.clearcache()
+        return value
 
     def update_main_file(
         self, total_requests: int, compared_requests: int, different_results: int
