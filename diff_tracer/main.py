@@ -1,15 +1,14 @@
 import json
-import os
 import random
 from typing import Any, Callable, Coroutine, TypeVar
 
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
 from .diff_match_patch import diff_match_patch
 from .utils import utils
+from .view import template
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -103,12 +102,7 @@ def init_web_view(app: FastAPI, security_token: str) -> None:
             )
 
             # get result files
-            current_path = os.getcwd()
-            target_folder = os.path.join(current_path, "tmp")
-            result_files = []
-            for file_name in os.listdir(target_folder):
-                if file_name.startswith("result-") and file_name.endswith(".html"):
-                    result_files.append(file_name)
+            result_files = utils.get_all_results_files()
 
             # get selected file content
             file_content: str = ""
@@ -116,20 +110,16 @@ def init_web_view(app: FastAPI, security_token: str) -> None:
                 file_content = utils.get_result_file_content(filename)
 
             # return HTML
-            templates = Jinja2Templates("diff_tracer")
-            return templates.TemplateResponse(
-                "view.html",
-                {
-                    "request": request,
-                    "token": token,
-                    "total_requests": total_requests,
-                    "compared_requests": compared_requests,
-                    "different_results": different_results,
-                    "result_files": result_files,
-                    "filename": filename,
-                    "file_content": file_content,
-                },
+            html = template.render(
+                token=token,
+                total_requests=total_requests,
+                compared_requests=compared_requests,
+                different_results=different_results,
+                result_files=result_files,
+                filename=filename,
+                file_content=file_content,
             )
+            return HTMLResponse(html)
 
         return endpoint
 

@@ -1,14 +1,16 @@
 import linecache
 import os
 from datetime import datetime
+from typing import List
 
 MAIN_FILE_NAME = "diff-tracer-main-info.txt"
+TMP_FOLDER_NAME = "tmp-diff-tracer"
 
 
 class Utils:
     def get_target_path(self) -> str:
         current_path = os.getcwd()
-        return os.path.join(current_path, "tmp")
+        return os.path.join(current_path, TMP_FOLDER_NAME)
 
     def get_main_file_path(self) -> str:
         target_path = self.get_target_path()
@@ -45,6 +47,15 @@ class Utils:
         file_location = os.path.join(target_path, file_name)
         with open(file_location, "w") as buffer:
             buffer.write(html_content)
+
+    def get_all_results_files(self) -> List[str]:
+        current_path = os.getcwd()
+        target_folder = os.path.join(current_path, TMP_FOLDER_NAME)
+        result_files = []
+        for file_name in os.listdir(target_folder):
+            if file_name.startswith("result-") and file_name.endswith(".html"):
+                result_files.append(file_name)
+        return result_files
 
     def get_result_file_content(self, filename: str) -> str:
         target_path = self.get_target_path()
