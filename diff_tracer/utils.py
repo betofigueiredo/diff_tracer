@@ -28,7 +28,7 @@ class Utils:
 
     def update_main_file(
         self, total_requests: int, compared_requests: int, different_results: int
-    ):
+    ) -> None:
         main_info_file_path = self.get_main_file_path()
         with open(main_info_file_path, "w") as wb:
             lines = [
@@ -38,7 +38,7 @@ class Utils:
             ]
             wb.writelines(lines)
 
-    def create_diff_result_file(self, html_content: str):
+    def create_diff_result_file(self, html_content: str) -> None:
         today = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         file_name = f"result-{today}.html"
         target_path = self.get_target_path()
