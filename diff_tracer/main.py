@@ -1,13 +1,10 @@
-import json
 import logging
-import random
 from typing import Any, Callable, Coroutine, TypeVar
 
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
-from .diff_match_patch import diff_match_patch
 from .utils import utils
 from .view import template
 
@@ -20,14 +17,50 @@ logger.propagate = False  # Prevent propagation to the root logger
 T = TypeVar("T", bound=BaseModel)
 
 
-# def compare_sync(
-#     current_fn: Callable[[], T],
-#     new_fn: Callable[[], T],
-#     percentage: int,
-#     logger_callback: Callable[[str], Coroutine[Any, Any, None]],
-#     # html_file_name="example_profile.html"
-# ):
-#     pass
+def compare_sync(
+    current_fn: Callable[[], T],
+    new_fn: Callable[[], T],
+    percentage: int,
+) -> T:
+    # make current production request
+    current_result = current_fn()
+
+    try:
+        # get previous requests data
+        total_requests, compared_requests, different_results = (
+            utils.get_main_file_values()
+        )
+
+        # count current request
+        total_requests += 1
+
+        # check if should make second request to compare
+        should_compare = utils.check_if_should_compare(
+            compared_requests, total_requests, percentage
+        )
+
+        # handle new result if needed
+        if should_compare:
+            compared_requests += 1
+            new_result = new_fn()
+
+            # check differences
+            is_equal, diff_content = utils.compare_results(current_result, new_result)
+
+            if not is_equal:
+                different_results += 1
+
+                # save file with differences
+                utils.create_diff_result_file(diff_content)
+
+        # update main file on memory
+        utils.update_main_file(total_requests, compared_requests, different_results)
+
+        return current_result
+
+    except Exception as err:
+        logger.exception(err)
+        return current_result
 
 
 async def compare_async[T](
@@ -39,43 +72,32 @@ async def compare_async[T](
     current_result = await current_fn()
 
     try:
-        # get previous data
-        total_requests = utils.get_main_file_value(key="total_requests", line=1)
-        compared_requests = utils.get_main_file_value(key="compared_requests", line=2)
-        different_results = utils.get_main_file_value(key="different_results", line=3)
+        # get previous requests data
+        total_requests, compared_requests, different_results = (
+            utils.get_main_file_values()
+        )
 
         # count current request
         total_requests += 1
 
         # check if should make second request to compare
-        percentage_of_total: int = round((compared_requests / total_requests) * 100)
-        should_compare = percentage_of_total < percentage and random.random() < 0.5
+        should_compare = utils.check_if_should_compare(
+            compared_requests, total_requests, percentage
+        )
 
         # handle new result if needed
         if should_compare:
             compared_requests += 1
             new_result = await new_fn()
 
-            # pretty print jsons
-            formatted_current_result = json.dumps(
-                json.loads(json.dumps(current_result)), indent=4
-            )
-            formatted_new_result = json.dumps(
-                json.loads(json.dumps(new_result)), indent=4
-            )
-
             # check differences
-            diff_content = diff_match_patch().diff_main(
-                text1=str(formatted_current_result), text2=str(formatted_new_result)
-            )
-            is_equal = len(diff_content) == 1
+            is_equal, diff_content = utils.compare_results(current_result, new_result)
 
             if not is_equal:
                 different_results += 1
 
                 # save file with differences
-                html_content = diff_match_patch().diff_prettyHtml(diffs=diff_content)
-                utils.create_diff_result_file(html_content)
+                utils.create_diff_result_file(diff_content)
 
         # update main file on memory
         utils.update_main_file(total_requests, compared_requests, different_results)
