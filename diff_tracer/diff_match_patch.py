@@ -30,7 +30,6 @@ import re
 import sys
 import time
 import urllib.parse
-from typing import Any, List, Tuple
 
 
 class diff_match_patch:
@@ -77,9 +76,7 @@ class diff_match_patch:
     DIFF_INSERT = 1
     DIFF_EQUAL = 0
 
-    def diff_main(
-        self, text1, text2, checklines=True, deadline=None
-    ) -> Tuple[bool, List[Any]]:
+    def diff_main(self, text1, text2, checklines=True, deadline=None):
         """Find the differences between two texts.  Simplifies the problem by
           stripping any common prefix or suffix off the texts before diffing.
 
