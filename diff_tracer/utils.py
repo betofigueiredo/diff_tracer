@@ -4,18 +4,13 @@ import os
 import random
 import shutil
 from datetime import datetime
-from typing import Any, List, NamedTuple, TypeVar
-
-from pydantic import BaseModel
+from typing import Any, List, NamedTuple
 
 from .diff_match_patch import diff_match_patch
 
 MAIN_FILE_NAME = "diff-tracer-main-info.txt"
 TMP_FOLDER_NAME = "tmp-diff-tracer"
 RESULT_FILE_PREFIX = "res"
-
-# generics
-T = TypeVar("T", bound=BaseModel)
 
 
 class MainFileValues(NamedTuple):
