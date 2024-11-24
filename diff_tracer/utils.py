@@ -1,6 +1,7 @@
 import linecache
 import os
 import random
+import shutil
 from datetime import datetime
 from typing import List
 
@@ -52,10 +53,9 @@ class Utils:
             buffer.write(html_content)
 
     def get_all_results_files(self) -> List[str]:
-        current_path = os.getcwd()
-        target_folder = os.path.join(current_path, TMP_FOLDER_NAME)
+        target_path = self.get_target_path()
         result_files = []
-        for file_name in os.listdir(target_folder):
+        for file_name in os.listdir(target_path):
             if file_name.startswith(f"{RESULT_FILE_PREFIX}-") and file_name.endswith(
                 ".html"
             ):
@@ -70,6 +70,11 @@ class Utils:
             with open(file_location, "r") as buffer:
                 return buffer.read()
         return ""
+
+    def clear_saved_data(self) -> None:
+        target_path = self.get_target_path()
+        print(target_path)
+        shutil.rmtree(target_path, ignore_errors=True)
 
 
 utils = Utils()
