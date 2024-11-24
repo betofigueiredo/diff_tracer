@@ -1,4 +1,5 @@
 import json
+import logging
 import random
 from typing import Any, Callable, Coroutine, TypeVar
 
@@ -10,6 +11,12 @@ from .diff_match_patch import diff_match_patch
 from .utils import utils
 from .view import template
 
+# logging
+logger = logging.getLogger("uvicorn.error")
+logger.setLevel(logging.DEBUG)
+logger.propagate = False  # Prevent propagation to the root logger
+
+# generics
 T = TypeVar("T", bound=BaseModel)
 
 
@@ -76,7 +83,7 @@ async def compare_async[T](
         return current_result
 
     except Exception as err:
-        print(err)
+        logger.exception(err)
         return current_result
 
 
@@ -87,6 +94,7 @@ def init_web_view(app: FastAPI, security_token: str) -> None:
         async def endpoint(
             request: Request, token: str, filename: str | None = None
         ) -> HTMLResponse:
+            # check token to keep endpoint "hidden"
             if token != security_token:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND, detail={"error": "Not found"}

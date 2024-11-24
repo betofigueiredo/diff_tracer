@@ -50,9 +50,9 @@ start_api = { cmd = "fastapi dev diff_tracer/fastapi.py", help = "start FastAPI 
 test = { cmd = "python3 -m pytest -vv", help = "runs all unit tests" }
 mypy = { cmd = "mypy diff_tracer", help = "runs mypy" }
 
-[tool.pyright]
-venvPath = "/home/beto/.cache/pypoetry/virtualenvs/"
-venv = "diff-tracer-E_M9EbPM-py3.12"
+# [tool.pyright]
+# venvPath = "/home/beto/.cache/pypoetry/virtualenvs/"
+# venv = "diff-tracer-7dn5iffw-py3.12"
 
 [build-system]
 requires = ["poetry-core", "setuptools", "wheel"]
