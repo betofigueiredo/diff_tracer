@@ -1,10 +1,12 @@
 import linecache
 import os
+import random
 from datetime import datetime
 from typing import List
 
 MAIN_FILE_NAME = "diff-tracer-main-info.txt"
 TMP_FOLDER_NAME = "tmp-diff-tracer"
+RESULT_FILE_PREFIX = "res"
 
 
 class Utils:
@@ -41,8 +43,9 @@ class Utils:
             wb.writelines(lines)
 
     def create_diff_result_file(self, html_content: str) -> None:
-        today = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-        file_name = f"result-{today}.html"
+        unique_id = random.randrange(1111, 9999, 4)
+        today = datetime.now().strftime("%Y-%m-%d-%H-%M")
+        file_name = f"{RESULT_FILE_PREFIX}-{today}-{str(unique_id)}.html"
         target_path = self.get_target_path()
         file_location = os.path.join(target_path, file_name)
         with open(file_location, "w") as buffer:
@@ -53,7 +56,9 @@ class Utils:
         target_folder = os.path.join(current_path, TMP_FOLDER_NAME)
         result_files = []
         for file_name in os.listdir(target_folder):
-            if file_name.startswith("result-") and file_name.endswith(".html"):
+            if file_name.startswith(f"{RESULT_FILE_PREFIX}-") and file_name.endswith(
+                ".html"
+            ):
                 result_files.append(file_name)
         return result_files
 
