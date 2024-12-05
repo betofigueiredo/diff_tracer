@@ -1,1 +1,1 @@
-from .main import compare_async, init_web_view
+from .main import compare_async, compare_sync, init_web_view
