@@ -48,7 +48,7 @@ async def get_users() -> UsersResponse:
     result = await compare_async(
         current_fn=current_fn,
         new_fn=new_fn,
-        percentage=80,
+        percentage=80,  # percentage of requests to compare, good to control expensive endpoints
     )
 
     return result
