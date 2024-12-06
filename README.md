@@ -6,6 +6,7 @@
   <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Made%20with-Python-blue?style=for-the-badge&labelColor=363a4f&color=346FA0"></a>
   <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/Made%20with-FastAPI-blue?style=for-the-badge&labelColor=363a4f&color=009485"></a>
   <br/><br/>
+  <img src="https://github.com/user-attachments/assets/53b3f1cd-f5a8-43de-9b9d-3a3dfbad064c" alt="Preview" width="100%"/>
 </p>
 
 > [!WARNING]
