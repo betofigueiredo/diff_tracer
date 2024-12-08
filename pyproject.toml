@@ -49,6 +49,9 @@ extend-ignore = ["E731"]
 start_api = { cmd = "fastapi dev diff_tracer/fastapi_example.py", help = "start FastAPI API" }
 test = { cmd = "python3 -m pytest -vv", help = "runs all unit tests" }
 mypy = { cmd = "mypy diff_tracer", help = "runs mypy" }
+config = { cmd = "poetry config pypi-token.pypi ", help = "set token env var" }
+build = { cmd = "poetry build", help = "build package" }
+publish = { cmd = "poetry publish --build", help = "publish package" }
 
 # [tool.pyright]
 # venvPath = "/home/beto/.cache/pypoetry/virtualenvs/"
