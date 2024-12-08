@@ -47,7 +47,7 @@ extend-ignore = ["E731"]
 
 [tool.taskipy.tasks]
 start_api = { cmd = "fastapi dev diff_tracer/fastapi_example.py", help = "start FastAPI API" }
-test = { cmd = "python3 -m pytest -vv", help = "runs all unit tests" }
+tests = { cmd = "python3 -m pytest -vv", help = "runs all unit tests" }
 mypy = { cmd = "mypy diff_tracer", help = "runs mypy" }
 config = { cmd = "poetry config pypi-token.pypi ", help = "set token env var" }
 build = { cmd = "poetry build", help = "build package" }
