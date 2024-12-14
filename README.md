@@ -2,7 +2,11 @@
 <p align="center">
   A FastAPI utility designed to compare two API responses, making it easier to validate behavior and ensure accuracy during refactoring.
   <br/><br/>
+  <img src="https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fbetofigueiredo%2Fdiff_tracer%2Fmain%2Fpyproject.toml&query=%24.tool.poetry.version&style=for-the-badge&label=Version&labelColor=363a4f&color=c9a7c2">
+  <br/>
+  <img src="https://img.shields.io/github/actions/workflow/status/betofigueiredo/diff_tracer/.github%2Fworkflows%2Fci.yaml?style=for-the-badge&label=CI&labelColor=363a4f">
   <a href="https://github.com/betofigueiredo/diff_tracer/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge&labelColor=363a4f&color=a6da95"></a>
+  <br/>
   <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Made%20with-Python-blue?style=for-the-badge&labelColor=363a4f&color=346FA0"></a>
   <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/Made%20with-FastAPI-blue?style=for-the-badge&labelColor=363a4f&color=009485"></a>
   <br/><br/>
