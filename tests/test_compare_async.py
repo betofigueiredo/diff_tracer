@@ -60,7 +60,7 @@ class TestCompareAsync:
     async def test_compared_requests(self) -> None:
         """should count compared requests and save in local file"""
 
-        for _ in range(6):
+        for _ in range(10):
             await compare_async(
                 current_fn=lambda: current_fn(),
                 new_fn=lambda: new_diff_fn(),
