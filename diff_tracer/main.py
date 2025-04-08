@@ -110,9 +110,9 @@ async def compare_async[T](
 
 
 def init_web_view(app: FastAPI, security_token: str) -> None:
-    def create_endpoint() -> (
-        Callable[[Request, str, str | None], Coroutine[Any, Any, HTMLResponse]]
-    ):
+    def create_endpoint() -> Callable[
+        [Request, str, str | None], Coroutine[Any, Any, HTMLResponse]
+    ]:
         async def endpoint(
             request: Request, token: str, filename: str | None = None
         ) -> HTMLResponse:
