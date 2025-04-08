@@ -53,10 +53,6 @@ config = { cmd = "poetry config pypi-token.pypi ", help = "set token env var" }
 build = { cmd = "poetry build", help = "build package" }
 publish = { cmd = "poetry publish --build", help = "publish package" }
 
-# [tool.pyright]
-# venvPath = "/home/beto/.cache/pypoetry/virtualenvs/"
-# venv = "diff-tracer-7dn5iffw-py3.12"
-
 [build-system]
 requires = ["poetry-core", "setuptools", "wheel"]
 build-backend = "poetry.core.masonry.api"
