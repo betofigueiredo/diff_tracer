@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "diff_tracer"
-version = "0.0.1"
+version = "0.1.0"
 description = "A FastAPI utility designed to compare two API responses, making it easier to validate behavior and ensure accuracy during refactoring."
 authors = ["Beto Figueiredo"]
 readme = "README.md"
